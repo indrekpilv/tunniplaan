@@ -951,3 +951,14 @@ body {
         margin: 1cm;
     }
 }
+
+@media (max-width: 575.98px) {
+    #search-results {
+        max-height: 55vh;
+    }
+
+    #search-results .list-group-item {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+}
