@@ -1,18 +1,28 @@
+let timetableDataPromise = null;
+
 function getDataUrl() {
     return new URL('./data/timetable.json', document.baseURI).href;
 }
 
-async function loadTimetableData() {
-    try {
-        const response = await fetch(getDataUrl() + '?v=' + Date.now());
-        if (!response.ok) {
-            throw new Error('Andmete laadimine ebaõnnestus');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Viga timetable.json laadimisel:', error);
-        return null;
+async function loadTimetableData(forceRefresh = false) {
+    if (!forceRefresh && timetableDataPromise) {
+        return timetableDataPromise;
     }
+
+    timetableDataPromise = (async () => {
+        try {
+            const response = await fetch(getDataUrl() + '?v=' + Date.now());
+            if (!response.ok) {
+                throw new Error('Andmete laadimine ebaõnnestus');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Viga timetable.json laadimisel:', error);
+            return null;
+        }
+    })();
+
+    return timetableDataPromise;
 }
 
 function initTheme() {
@@ -57,6 +67,11 @@ function getDefaultDay() {
     return (day >= 1 && day <= 5) ? day : 1;
 }
 
+function normalizeDay(dayValue) {
+    const day = Number(dayValue);
+    return day >= 1 && day <= 5 ? day : getDefaultDay();
+}
+
 function getQueryParams() {
     return new URLSearchParams(window.location.search);
 }
@@ -81,6 +96,16 @@ function buildViewUrl(type, id, day) {
 
 function buildPrintUrl(type, id) {
     return `./print.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`;
+}
+
+function setOrReplaceDayParam(relativeUrl, day) {
+    const url = new URL(relativeUrl, document.baseURI);
+    url.searchParams.set('day', String(day));
+
+    const path = url.pathname.split('/').pop() || '';
+    const search = url.searchParams.toString();
+
+    return search ? `./${path}?${search}` : `./${path}`;
 }
 
 function getPeriodsForDay(timeMap, dayNum) {
@@ -139,7 +164,7 @@ function initHomeLogic() {
 
         const myButton = document.createElement('a');
         myButton.id = 'my-timetable-button';
-        myButton.href = myTimetableUrl + '&day=' + dayParam;
+        myButton.href = setOrReplaceDayParam(myTimetableUrl, dayParam);
         myButton.className = 'btn btn-warning btn-lg fs-4 py-3 fw-bold';
         myButton.textContent = 'Ava minu tunniplaan';
 
@@ -154,7 +179,7 @@ function getTypeBadgeLabel(type) {
     return 'Vaade';
 }
 
-function renderSearchResultItem(item, query) {
+function renderSearchResultItem(item) {
     const badge = getTypeBadgeLabel(item.type);
     const safeName = escapeHtml(item.name);
     const safeBadge = escapeHtml(badge);
@@ -208,7 +233,7 @@ function initLiveSearch(dataList) {
             link.href = buildUrl(item);
             link.classList.add('list-group-item', 'list-group-item-action');
             link.dataset.searchResult = '1';
-            link.innerHTML = renderSearchResultItem(item, query);
+            link.innerHTML = renderSearchResultItem(item);
 
             link.addEventListener('mouseenter', () => {
                 searchResults.querySelectorAll('a[data-search-result="1"]').forEach(a => a.classList.remove('active'));
@@ -262,7 +287,7 @@ function initLiveSearch(dataList) {
     });
 
     document.addEventListener('click', function(e) {
-        if (e.target !== searchInput) {
+        if (e.target !== searchInput && !searchResults.contains(e.target)) {
             searchResults.innerHTML = '';
         }
     });
@@ -397,7 +422,7 @@ function getPrevNextIds(data, type, currentId) {
 }
 
 function filterLessonsByDay(allLessons, selectedDay, timeMap) {
-    const activeDayNum = Number(selectedDay);
+    const activeDayNum = normalizeDay(selectedDay);
     const periods = getPeriodsForDay(timeMap || {}, activeDayNum);
 
     const lessonsForDay = allLessons
@@ -413,7 +438,7 @@ function filterLessonsByDay(allLessons, selectedDay, timeMap) {
         grouped.get(lesson.period).push(lesson);
     });
 
-    const result = periods.map(periodNum => {
+    return periods.map(periodNum => {
         const periodLessons = grouped.get(periodNum);
         const timeKey = `${activeDayNum}_${periodNum}`;
         const [start, end] = (timeMap || {})[timeKey] || ['--:--', '--:--'];
@@ -440,8 +465,6 @@ function filterLessonsByDay(allLessons, selectedDay, timeMap) {
             room_raw_id: ''
         }];
     });
-
-    return result;
 }
 
 function renderDayButtons(type, id, activeDay) {
@@ -549,41 +572,41 @@ async function initViewPage() {
     const desktopHeaderRow = document.getElementById('desktop-header-row');
 
     if (!data) {
-        errorEl.classList.remove('d-none');
-        titleEl.textContent = 'Andmed puuduvad';
-        updatedEl.textContent = 'Andmeid ei õnnestunud laadida.';
+        if (errorEl) errorEl.classList.remove('d-none');
+        if (titleEl) titleEl.textContent = 'Andmed puuduvad';
+        if (updatedEl) updatedEl.textContent = 'Andmeid ei õnnestunud laadida.';
         return;
     }
 
     const params = getQueryParams();
     const type = params.get('type');
     const id = params.get('id');
-    const day = Number(params.get('day') || getDefaultDay());
+    const day = normalizeDay(params.get('day'));
 
     if (!type || !id) {
-        errorEl.classList.remove('d-none');
-        titleEl.textContent = 'Vigane vaade';
-        updatedEl.textContent = 'Puuduv type või id.';
+        if (errorEl) errorEl.classList.remove('d-none');
+        if (titleEl) titleEl.textContent = 'Vigane vaade';
+        if (updatedEl) updatedEl.textContent = 'Puuduv type või id.';
         return;
     }
 
     const collection = getEntityCollection(data, type);
     const entityName = collection[id] || 'Tundmatu';
 
-    titleEl.textContent = getEntityTitle(type, entityName);
+    if (titleEl) titleEl.textContent = getEntityTitle(type, entityName);
     document.title = getEntityTitle(type, entityName);
-    updatedEl.textContent = `Viimati uuendatud: ${data.meta?.last_updated || 'Teadmata'}`;
-    navBackEl.href = getEntityPluralPage(type);
+    if (updatedEl) updatedEl.textContent = `Viimati uuendatud: ${data.meta?.last_updated || 'Teadmata'}`;
+    if (navBackEl) navBackEl.href = getEntityPluralPage(type);
 
     renderDayButtons(type, id, day);
 
     const { prevId, nextId } = getPrevNextIds(data, type, id);
-    if (prevId) {
+    if (prevId && prevEl) {
         prevEl.href = buildViewUrl(type, prevId, day);
         prevEl.classList.remove('d-none');
     }
 
-    if (nextId) {
+    if (nextId && nextEl) {
         nextEl.href = buildViewUrl(type, nextId, day);
         nextEl.classList.remove('d-none');
     }
@@ -592,8 +615,8 @@ async function initViewPage() {
     const groupedLessons = filterLessonsByDay(allLessons, day, data.time_map || {});
 
     const saveUrl = `./vaade.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`;
-    saveBtn.dataset.url = saveUrl;
-    printBtn.href = buildPrintUrl(type, id);
+    if (saveBtn) saveBtn.dataset.url = saveUrl;
+    if (printBtn) printBtn.href = buildPrintUrl(type, id);
 
     if (desktopHeaderRow) {
         desktopHeaderRow.innerHTML = `
@@ -612,7 +635,7 @@ async function initViewPage() {
     initTimetableLogic(day);
 }
 
-function buildWeekLessonsGrid(type, lessons) {
+function buildWeekLessonsGrid(lessons) {
     const grid = {};
     for (let day = 1; day <= 5; day++) {
         grid[day] = {};
@@ -677,9 +700,9 @@ async function initPrintPage() {
     const tableBody = document.getElementById('print-table-body');
 
     if (!data) {
-        errorEl.classList.remove('d-none');
-        titleEl.textContent = 'Andmed puuduvad';
-        updatedEl.textContent = 'Andmeid ei õnnestunud laadida.';
+        if (errorEl) errorEl.classList.remove('d-none');
+        if (titleEl) titleEl.textContent = 'Andmed puuduvad';
+        if (updatedEl) updatedEl.textContent = 'Andmeid ei õnnestunud laadida.';
         return;
     }
 
@@ -688,9 +711,9 @@ async function initPrintPage() {
     const id = params.get('id');
 
     if (!type || !id) {
-        errorEl.classList.remove('d-none');
-        titleEl.textContent = 'Vigane nädalavaade';
-        updatedEl.textContent = 'Puuduv type või id.';
+        if (errorEl) errorEl.classList.remove('d-none');
+        if (titleEl) titleEl.textContent = 'Vigane nädalavaade';
+        if (updatedEl) updatedEl.textContent = 'Puuduv type või id.';
         return;
     }
 
@@ -699,11 +722,19 @@ async function initPrintPage() {
     const title = getEntityWeekTitle(type, entityName);
 
     document.title = title;
-    titleEl.textContent = title;
-    updatedEl.textContent = `Viimati uuendatud: ${data.meta?.last_updated || 'Teadmata'}`;
+    if (titleEl) titleEl.textContent = title;
+    if (updatedEl) updatedEl.textContent = `Viimati uuendatud: ${data.meta?.last_updated || 'Teadmata'}`;
+
+    if (!tableBody) {
+        if (errorEl) {
+            errorEl.textContent = 'print-table-body elementi ei leitud.';
+            errorEl.classList.remove('d-none');
+        }
+        return;
+    }
 
     const lessons = getLessonsForSelection(data, type, id);
-    const grid = buildWeekLessonsGrid(type, lessons);
+    const grid = buildWeekLessonsGrid(lessons);
     const periods = getAllWeekPeriods(data.time_map || {});
 
     tableBody.innerHTML = periods.map(period => {
