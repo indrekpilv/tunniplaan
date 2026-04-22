@@ -75,6 +75,14 @@ function extractClassNumber(className) {
     return match ? parseInt(match[1], 10) : 999;
 }
 
+function buildViewUrl(type, id, day) {
+    return `./vaade.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}&day=${encodeURIComponent(day)}`;
+}
+
+function buildPrintUrl(type, id) {
+    return `./print.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`;
+}
+
 function getPeriodsForDay(timeMap, dayNum) {
     const periods = Object.keys(timeMap || {})
         .map(key => {
@@ -86,32 +94,89 @@ function getPeriodsForDay(timeMap, dayNum) {
         .sort((a, b) => a - b);
 
     if (periods.length > 0) return periods;
-
     return [1, 2, 3, 4, 5, 6, 7, 8, 9];
 }
 
-function buildViewUrl(type, id, day) {
-    return `./vaade.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}&day=${encodeURIComponent(day)}`;
+function getAllWeekPeriods(timeMap) {
+    const periods = Array.from(
+        new Set(
+            Object.keys(timeMap || {})
+                .map(key => {
+                    const [, period] = key.split('_').map(Number);
+                    return period;
+                })
+                .filter(Boolean)
+        )
+    ).sort((a, b) => a - b);
+
+    if (periods.length > 0) return periods;
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9];
 }
 
-function buildPrintUrl(type, id) {
-    return `./print.html?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`;
+function getPeriodTime(timeMap, period) {
+    for (let day = 1; day <= 5; day++) {
+        const key = `${day}_${period}`;
+        if (timeMap && timeMap[key]) {
+            return {
+                start: timeMap[key][0],
+                end: timeMap[key][1]
+            };
+        }
+    }
+
+    return {
+        start: '--:--',
+        end: '--:--'
+    };
 }
 
 function initHomeLogic() {
     const myTimetableUrl = localStorage.getItem('myTimetableUrl');
     const menu = document.getElementById('main-menu');
 
-    if (myTimetableUrl && menu) {
+    if (myTimetableUrl && menu && !document.getElementById('my-timetable-button')) {
         const dayParam = getDefaultDay();
 
         const myButton = document.createElement('a');
+        myButton.id = 'my-timetable-button';
         myButton.href = myTimetableUrl + '&day=' + dayParam;
         myButton.className = 'btn btn-warning btn-lg fs-4 py-3 fw-bold';
         myButton.textContent = 'Ava minu tunniplaan';
 
         menu.prepend(myButton);
     }
+}
+
+function getTypeBadgeLabel(type) {
+    if (type === 'teacher') return 'Õpetaja';
+    if (type === 'class') return 'Klass';
+    if (type === 'room') return 'Ruum';
+    return 'Vaade';
+}
+
+function renderSearchResultItem(item, query) {
+    const badge = getTypeBadgeLabel(item.type);
+    const safeName = escapeHtml(item.name);
+    const safeBadge = escapeHtml(badge);
+
+    return `
+        <div class="search-result-row">
+            <div class="search-result-main">
+                <div class="search-result-title">${safeName}</div>
+                <div class="search-result-sub">Ava tänase päeva vaade</div>
+            </div>
+            <div class="search-result-badge">${safeBadge}</div>
+        </div>
+    `;
+}
+
+function renderSearchEmptyState(query) {
+    const text = query ? `Päringule "${escapeHtml(query)}" vasteid ei leitud.` : 'Tulemusi ei leitud.';
+    return `
+        <div class="list-group-item search-empty-state">
+            ${text}
+        </div>
+    `;
 }
 
 function initLiveSearch(dataList) {
@@ -133,14 +198,20 @@ function initLiveSearch(dataList) {
             item.name.toLowerCase().includes(query)
         );
 
+        if (filtered.length === 0) {
+            searchResults.innerHTML = renderSearchEmptyState(query);
+            return;
+        }
+
         filtered.forEach((item, index) => {
             const link = document.createElement('a');
             link.href = buildUrl(item);
-            link.textContent = item.name;
             link.classList.add('list-group-item', 'list-group-item-action');
+            link.dataset.searchResult = '1';
+            link.innerHTML = renderSearchResultItem(item, query);
 
             link.addEventListener('mouseenter', () => {
-                searchResults.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+                searchResults.querySelectorAll('a[data-search-result="1"]').forEach(a => a.classList.remove('active'));
                 link.classList.add('active');
                 activeIndex = index;
             });
@@ -150,7 +221,7 @@ function initLiveSearch(dataList) {
     }
 
     searchInput.addEventListener('keydown', function(e) {
-        const links = searchResults.querySelectorAll('a');
+        const links = searchResults.querySelectorAll('a[data-search-result="1"]');
         if (links.length === 0) return;
 
         if (activeIndex > -1 && links[activeIndex]) {
@@ -181,11 +252,13 @@ function initLiveSearch(dataList) {
     });
 
     searchInput.addEventListener('input', function() {
-        showResults(this.value.toLowerCase());
+        showResults(this.value.toLowerCase().trim());
     });
 
     searchInput.addEventListener('click', function() {
-        if (this.value.length === 0) showResults('');
+        if (this.value.trim().length === 0) {
+            showResults('');
+        }
     });
 
     document.addEventListener('click', function(e) {
@@ -239,13 +312,6 @@ function getEntityCollection(data, type) {
     return {};
 }
 
-function getEntityLabel(type) {
-    if (type === 'teacher') return 'Õpetaja';
-    if (type === 'class') return 'Klass';
-    if (type === 'room') return 'Ruum';
-    return 'Vaade';
-}
-
 function getEntityPluralPage(type) {
     if (type === 'teacher') return './opetajad.html';
     if (type === 'class') return './klassid.html';
@@ -257,6 +323,13 @@ function getEntityTitle(type, name) {
     if (type === 'teacher') return `Õpetaja ${name} tunniplaan`;
     if (type === 'class') return `Klassi ${name} tunniplaan`;
     if (type === 'room') return `Ruumi ${name} tunniplaan`;
+    return name;
+}
+
+function getEntityWeekTitle(type, name) {
+    if (type === 'teacher') return `Õpetaja ${name} nädalavaade`;
+    if (type === 'class') return `Klassi ${name} nädalavaade`;
+    if (type === 'room') return `Ruumi ${name} nädalavaade`;
     return name;
 }
 
@@ -537,4 +610,115 @@ async function initViewPage() {
     renderDesktopTable(type, groupedLessons);
     renderMobileCards(type, groupedLessons);
     initTimetableLogic(day);
+}
+
+function buildWeekLessonsGrid(type, lessons) {
+    const grid = {};
+    for (let day = 1; day <= 5; day++) {
+        grid[day] = {};
+    }
+
+    lessons.forEach(lesson => {
+        if (!grid[lesson.day]) return;
+        if (!grid[lesson.day][lesson.period]) {
+            grid[lesson.day][lesson.period] = [];
+        }
+        grid[lesson.day][lesson.period].push(lesson);
+    });
+
+    return grid;
+}
+
+function renderPrintCell(type, lessons) {
+    if (!lessons || lessons.length === 0) {
+        return '';
+    }
+
+    return lessons.map(lesson => {
+        let meta = '';
+
+        if (type === 'room') {
+            meta = `
+                <div class="lesson-meta-row">
+                    <span>${escapeHtml(lesson.teacher || '')}</span>
+                    <span>${escapeHtml(lesson.class_name || '')}</span>
+                </div>
+            `;
+        } else if (type === 'class') {
+            meta = `
+                <div class="lesson-meta-row">
+                    <span>${escapeHtml(lesson.teacher || '')}</span>
+                    <span>${escapeHtml(lesson.room || '')}</span>
+                </div>
+            `;
+        } else if (type === 'teacher') {
+            meta = `
+                <div class="lesson-meta-row">
+                    <span>${escapeHtml(lesson.class_name || '')}</span>
+                    <span>${escapeHtml(lesson.room || '')}</span>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="lesson-block">
+                <div class="lesson-subject">${escapeHtml(lesson.subject || '')}</div>
+                ${meta}
+            </div>
+        `;
+    }).join('');
+}
+
+async function initPrintPage() {
+    const data = await loadTimetableData();
+    const titleEl = document.getElementById('print-title');
+    const updatedEl = document.getElementById('print-last-updated');
+    const errorEl = document.getElementById('print-error');
+    const tableBody = document.getElementById('print-table-body');
+
+    if (!data) {
+        errorEl.classList.remove('d-none');
+        titleEl.textContent = 'Andmed puuduvad';
+        updatedEl.textContent = 'Andmeid ei õnnestunud laadida.';
+        return;
+    }
+
+    const params = getQueryParams();
+    const type = params.get('type');
+    const id = params.get('id');
+
+    if (!type || !id) {
+        errorEl.classList.remove('d-none');
+        titleEl.textContent = 'Vigane nädalavaade';
+        updatedEl.textContent = 'Puuduv type või id.';
+        return;
+    }
+
+    const collection = getEntityCollection(data, type);
+    const entityName = collection[id] || 'Tundmatu';
+    const title = getEntityWeekTitle(type, entityName);
+
+    document.title = title;
+    titleEl.textContent = title;
+    updatedEl.textContent = `Viimati uuendatud: ${data.meta?.last_updated || 'Teadmata'}`;
+
+    const lessons = getLessonsForSelection(data, type, id);
+    const grid = buildWeekLessonsGrid(type, lessons);
+    const periods = getAllWeekPeriods(data.time_map || {});
+
+    tableBody.innerHTML = periods.map(period => {
+        const time = getPeriodTime(data.time_map || {}, period);
+
+        return `
+            <tr>
+                <td class="print-period-cell">
+                    <strong>${escapeHtml(period)}.</strong>
+                    <div class="print-time-range">${escapeHtml(time.start)}–${escapeHtml(time.end)}</div>
+                </td>
+                ${[1, 2, 3, 4, 5].map(day =>
+                    `<td>${renderPrintCell(type, grid[day][period] || [])}</td>`
+                ).join('')}
+            </tr>
+        `;
+    }).join('');
 }
