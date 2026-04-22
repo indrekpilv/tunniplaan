@@ -380,3 +380,160 @@ body {
         width: 100%;
     }
 }
+.home-hero-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: var(--bs-body-bg);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.06);
+}
+
+[data-bs-theme="dark"] .home-hero-card {
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.22);
+}
+
+.home-hero-banner {
+    padding: 2rem 1.25rem;
+    background:
+        radial-gradient(circle at top right, rgba(13,110,253,0.20), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(25,135,84,0.16), transparent 35%),
+        linear-gradient(135deg, rgba(13,110,253,0.08), rgba(13,110,253,0.02));
+}
+
+.home-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: rgba(13,110,253,0.10);
+    color: var(--bs-body-color);
+}
+
+.home-title {
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    line-height: 1.1;
+    font-weight: 800;
+    margin: 0;
+}
+
+.home-subtitle {
+    max-width: 700px;
+    color: var(--bs-secondary-color);
+    font-size: 1.05rem;
+}
+
+.home-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.home-nav-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.home-nav-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+    border-color: rgba(13,110,253,0.28);
+    color: var(--bs-body-color);
+}
+
+[data-bs-theme="dark"] .home-nav-card {
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.20);
+}
+
+[data-bs-theme="dark"] .home-nav-card:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.28);
+    border-color: rgba(255,255,255,0.16);
+}
+
+.home-nav-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    background: rgba(13,110,253,0.10);
+}
+
+.card-teachers .home-nav-icon {
+    background: rgba(13,110,253,0.12);
+}
+
+.card-classes .home-nav-icon {
+    background: rgba(25,135,84,0.12);
+}
+
+.card-rooms .home-nav-icon {
+    background: rgba(13,202,240,0.14);
+}
+
+.home-nav-content {
+    min-width: 0;
+}
+
+.home-nav-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.home-nav-text {
+    color: var(--bs-secondary-color);
+    line-height: 1.45;
+    font-size: 0.96rem;
+}
+
+.home-footer-note {
+    color: var(--bs-secondary-color);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 991.98px) {
+    .home-menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-hero-banner {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .home-nav-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .home-nav-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.35rem;
+        border-radius: 0.85rem;
+    }
+
+    .home-title {
+        font-size: 1.8rem;
+    }
+
+    .home-subtitle {
+        font-size: 0.98rem;
+    }
+}
