@@ -71,8 +71,37 @@
     <script src="./assets/js/app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            initTheme();
-            await initPrintPage();
+            const errorEl = document.getElementById('print-error');
+            const titleEl = document.getElementById('print-title');
+            const updatedEl = document.getElementById('print-last-updated');
+    
+            try {
+                if (typeof initTheme !== 'function') {
+                    throw new Error('app.js ei laadinud õigesti');
+                }
+    
+                if (typeof initPrintPage !== 'function') {
+                    throw new Error('initPrintPage funktsioon puudub app.js failist');
+                }
+    
+                initTheme();
+                await initPrintPage();
+            } catch (error) {
+                console.error(error);
+    
+                if (titleEl) {
+                    titleEl.textContent = 'Nädalavaate laadimine ebaõnnestus';
+                }
+    
+                if (updatedEl) {
+                    updatedEl.textContent = error.message || 'Tundmatu JavaScripti viga';
+                }
+    
+                if (errorEl) {
+                    errorEl.textContent = 'Viga nädalavaate käivitamisel: ' + (error.message || 'Tundmatu viga');
+                    errorEl.classList.remove('d-none');
+                }
+            }
         });
     </script>
 </body>
