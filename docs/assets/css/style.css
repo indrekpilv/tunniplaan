@@ -48,7 +48,7 @@ body {
     border-top: none;
     background: var(--bs-body-bg);
     border: 1px solid rgba(0,0,0,.125);
-    border-radius: 0 0 .25rem .25rem;
+    border-radius: 0 0 1rem 1rem;
 }
 
 [data-bs-theme="dark"] #search-results {
@@ -88,103 +88,6 @@ body {
     background-color: inherit !important;
 }
 
-.title-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-}
-
-.title-container h2 {
-    margin-bottom: 0;
-    flex-grow: 1;
-}
-
-.title-nav {
-    flex-shrink: 0;
-}
-
-@media print {
-    .no-print {
-        display: none !important;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #fff !important;
-        color: #000 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    .container-fluid {
-        padding: 0 !important;
-    }
-
-    .print-table th, .print-table td {
-        font-size: 8pt;
-        border: 1px solid #666 !important;
-        color: #000 !important;
-    }
-
-    tr {
-        page-break-inside: avoid;
-    }
-
-    .lesson-block {
-        border: none;
-        padding: 0;
-    }
-
-    @page {
-        margin: 1cm;
-    }
-}
-
-.print-table {
-    table-layout: fixed;
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.print-table th, .print-table td {
-    border: 1px solid #666;
-    padding: 0.25rem;
-    text-align: left;
-    vertical-align: top;
-    height: auto;
-    min-height: 40px;
-    word-wrap: break-word;
-    font-size: 0.9rem;
-}
-
-.print-table th:first-child,
-.print-table td:first-child {
-    width: 12%;
-    text-align: center;
-    vertical-align: middle;
-    background-color: #f8f9fa;
-}
-
-.print-table th:not(:first-child),
-.print-table td:not(:first-child) {
-    width: 17.6%;
-}
-
-.lesson-block {
-    font-size: 0.85rem;
-    margin-bottom: 4px;
-    padding: 4px;
-    border-radius: 4px;
-    background-color: #fff;
-    border: 1px solid #eee;
-    color: #000;
-}
-
-.lesson-block:last-child {
-    margin-bottom: 0;
-}
 .page-shell {
     max-width: 1200px;
     margin: 0 auto;
@@ -334,52 +237,6 @@ body {
     backdrop-filter: blur(10px);
 }
 
-@media (max-width: 991.98px) {
-    .toolbar-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .action-row {
-        justify-content: flex-start;
-    }
-
-    .hero-title-row {
-        grid-template-columns: auto 1fr auto;
-    }
-
-    .hero-nav-btn {
-        width: 42px;
-        height: 42px;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .hero-banner,
-    .topbar-card,
-    .section-card,
-    .mobile-card-wrap {
-        border-radius: 1rem;
-    }
-
-    .hero-title-row {
-        gap: 0.5rem;
-    }
-
-    .hero-nav-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-    }
-
-    .day-scroll {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .day-scroll .btn {
-        width: 100%;
-    }
-}
 .home-hero-card {
     border: 1px solid rgba(0,0,0,0.08);
     border-radius: 1.5rem;
@@ -506,36 +363,95 @@ body {
     font-size: 0.95rem;
 }
 
-@media (max-width: 991.98px) {
-    .home-menu-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .home-hero-banner {
-        padding: 1.5rem 1rem;
-    }
+.my-timetable-strip {
+    display: block;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 1.1rem;
+    background: linear-gradient(135deg, rgba(255,193,7,0.16), rgba(255,193,7,0.07));
+    color: var(--bs-body-color);
+    box-shadow: 0 8px 22px rgba(0,0,0,0.04);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
-@media (max-width: 575.98px) {
-    .home-nav-card {
-        padding: 1rem;
-        border-radius: 1rem;
-    }
+.my-timetable-strip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+    border-color: rgba(255,193,7,0.45);
+    color: var(--bs-body-color);
+}
 
-    .home-nav-icon {
-        width: 48px;
-        height: 48px;
-        font-size: 1.35rem;
-        border-radius: 0.85rem;
-    }
+[data-bs-theme="dark"] .my-timetable-strip {
+    border-color: rgba(255,255,255,0.08);
+    background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255,193,7,0.05));
+    box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+}
 
-    .home-title {
-        font-size: 1.8rem;
-    }
+.my-timetable-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+}
 
-    .home-subtitle {
-        font-size: 0.98rem;
-    }
+.my-timetable-strip-left {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.my-timetable-strip-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    background: rgba(255,255,255,0.4);
+    flex-shrink: 0;
+}
+
+[data-bs-theme="dark"] .my-timetable-strip-icon {
+    background: rgba(255,255,255,0.08);
+}
+
+.my-timetable-strip-texts {
+    min-width: 0;
+}
+
+.my-timetable-strip-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0.15rem;
+}
+
+.my-timetable-strip-title {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.my-timetable-strip-right {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.my-timetable-strip-hint {
+    color: var(--bs-secondary-color);
+    font-size: 0.9rem;
+}
+
+.my-timetable-strip-arrow {
+    font-size: 1.2rem;
+    font-weight: 700;
+    opacity: 0.75;
 }
 
 .search-topbar-card,
@@ -667,7 +583,6 @@ body {
 
 #search-results {
     margin-top: 0.4rem;
-    border-radius: 1rem;
     overflow: hidden;
 }
 
@@ -685,38 +600,6 @@ body {
     border-bottom: none;
 }
 
-@media (max-width: 991.98px) {
-    .search-hero-banner {
-        padding: 1.5rem 1rem;
-    }
-}
-
-@media (max-width: 575.98px) {
-    .search-topbar-card,
-    .search-hero-card,
-    .search-panel-card {
-        border-radius: 1rem;
-    }
-
-    .search-icon-circle {
-        width: 60px;
-        height: 60px;
-        font-size: 1.6rem;
-        border-radius: 1rem;
-    }
-
-    .search-page-title {
-        font-size: 1.7rem;
-    }
-
-    .search-page-subtitle {
-        font-size: 0.97rem;
-    }
-
-    .search-input-modern {
-        border-radius: 0.9rem;
-    }
-}
 .search-result-row {
     display: flex;
     align-items: center;
@@ -885,6 +768,117 @@ body {
     margin-top: 0.25rem;
     color: #444;
     font-size: 0.82rem;
+}
+
+@media (max-width: 991.98px) {
+    .toolbar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-row {
+        justify-content: flex-start;
+    }
+
+    .hero-title-row {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .hero-nav-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .home-menu-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-hero-banner,
+    .search-hero-banner {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .hero-banner,
+    .topbar-card,
+    .section-card,
+    .mobile-card-wrap,
+    .search-topbar-card,
+    .search-hero-card,
+    .search-panel-card {
+        border-radius: 1rem;
+    }
+
+    .hero-title-row {
+        gap: 0.5rem;
+    }
+
+    .hero-nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .day-scroll {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .day-scroll .btn {
+        width: 100%;
+    }
+
+    .home-nav-card {
+        padding: 1rem;
+        border-radius: 1rem;
+    }
+
+    .home-nav-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.35rem;
+        border-radius: 0.85rem;
+    }
+
+    .home-title {
+        font-size: 1.8rem;
+    }
+
+    .home-subtitle,
+    .search-page-subtitle {
+        font-size: 0.97rem;
+    }
+
+    .search-icon-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+        border-radius: 1rem;
+    }
+
+    .search-page-title {
+        font-size: 1.7rem;
+    }
+
+    .search-input-modern {
+        border-radius: 0.9rem;
+    }
+
+    .my-timetable-strip-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .my-timetable-strip-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .print-table th,
+    .print-table td {
+        font-size: 0.82rem;
+    }
 }
 
 @media print {
