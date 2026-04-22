@@ -221,20 +221,19 @@ function renderSearchEmptyState(query) {
 function initLiveSearch(dataList) {
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('search-results');
+    const searchContainer = searchInput ? searchInput.closest('form') || searchInput.parentElement : null;
     let activeIndex = -1;
 
     if (!searchInput || !searchResults) return;
 
-    searchResults.addEventListener('touchstart', function(e) {
-    e.stopPropagation();
-    }, { passive: true });
-
-    searchResults.addEventListener('touchmove', function(e) {
-    e.stopPropagation();
-    }, { passive: true });
-
     function buildUrl(item) {
         return buildViewUrl(item.type, item.id, getDefaultDay());
+    }
+
+    function closeResults() {
+        searchResults.innerHTML = '';
+        activeIndex = -1;
+        searchResults.classList.remove('is-open');
     }
 
     function showResults(query) {
@@ -247,6 +246,7 @@ function initLiveSearch(dataList) {
 
         if (filtered.length === 0) {
             searchResults.innerHTML = renderSearchEmptyState(query);
+            searchResults.classList.add('is-open');
             return;
         }
 
@@ -265,7 +265,21 @@ function initLiveSearch(dataList) {
 
             searchResults.appendChild(link);
         });
+
+        searchResults.classList.add('is-open');
     }
+
+    searchInput.addEventListener('focus', function() {
+        showResults(this.value.toLowerCase().trim());
+    });
+
+    searchInput.addEventListener('input', function() {
+        showResults(this.value.toLowerCase().trim());
+    });
+
+    searchInput.addEventListener('click', function() {
+        showResults(this.value.toLowerCase().trim());
+    });
 
     searchInput.addEventListener('keydown', function(e) {
         const links = searchResults.querySelectorAll('a[data-search-result="1"]');
@@ -288,6 +302,10 @@ function initLiveSearch(dataList) {
             if (activeIndex > -1 && links[activeIndex]) {
                 links[activeIndex].click();
             }
+            return;
+        } else if (e.key === 'Escape') {
+            closeResults();
+            return;
         } else {
             return;
         }
@@ -298,15 +316,24 @@ function initLiveSearch(dataList) {
         }
     });
 
-    searchInput.addEventListener('input', function() {
-        showResults(this.value.toLowerCase().trim());
+    searchResults.addEventListener('pointerdown', function(e) {
+        e.stopPropagation();
     });
 
-    searchInput.addEventListener('click', function() {
-        if (this.value.trim().length === 0) {
-            showResults('');
+    searchResults.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+    }, { passive: true });
+
+    searchResults.addEventListener('touchmove', function(e) {
+        e.stopPropagation();
+    }, { passive: true });
+
+    document.addEventListener('pointerdown', function(e) {
+        if (!searchContainer || !searchContainer.contains(e.target)) {
+            closeResults();
         }
     });
+}
 
     document.addEventListener('click', function(e) {
         if (e.target !== searchInput && !searchResults.contains(e.target)) {
