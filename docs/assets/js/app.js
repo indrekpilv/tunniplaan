@@ -157,18 +157,32 @@ function getPeriodTime(timeMap, period) {
 
 function initHomeLogic() {
     const myTimetableUrl = localStorage.getItem('myTimetableUrl');
-    const menu = document.getElementById('main-menu');
+    const slot = document.getElementById('my-timetable-slot');
 
-    if (myTimetableUrl && menu && !document.getElementById('my-timetable-button')) {
+    if (myTimetableUrl && slot && !document.getElementById('my-timetable-button')) {
         const dayParam = getDefaultDay();
 
         const myButton = document.createElement('a');
         myButton.id = 'my-timetable-button';
         myButton.href = setOrReplaceDayParam(myTimetableUrl, dayParam);
-        myButton.className = 'btn btn-warning btn-lg fs-4 py-3 fw-bold';
-        myButton.textContent = 'Ava minu tunniplaan';
+        myButton.className = 'my-timetable-strip text-decoration-none';
+        myButton.innerHTML = `
+            <div class="my-timetable-strip-inner">
+                <div class="my-timetable-strip-left">
+                    <div class="my-timetable-strip-icon">⭐</div>
+                    <div class="my-timetable-strip-texts">
+                        <div class="my-timetable-strip-label">Minu tunniplaan</div>
+                        <div class="my-timetable-strip-title">Ava minu tänane vaade</div>
+                    </div>
+                </div>
+                <div class="my-timetable-strip-right">
+                    <span class="my-timetable-strip-hint">Kiire ligipääs</span>
+                    <span class="my-timetable-strip-arrow">→</span>
+                </div>
+            </div>
+        `;
 
-        menu.prepend(myButton);
+        slot.appendChild(myButton);
     }
 }
 
