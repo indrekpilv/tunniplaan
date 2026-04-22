@@ -537,3 +537,183 @@ body {
         font-size: 0.98rem;
     }
 }
+
+.search-topbar-card,
+.search-hero-card,
+.search-panel-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 1.25rem;
+    background: var(--bs-body-bg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+[data-bs-theme="dark"] .search-topbar-card,
+[data-bs-theme="dark"] .search-hero-card,
+[data-bs-theme="dark"] .search-panel-card {
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+}
+
+.search-hero-card {
+    overflow: hidden;
+}
+
+.search-hero-banner {
+    padding: 2rem 1.25rem;
+    background:
+        radial-gradient(circle at top right, rgba(13,110,253,0.18), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(25,135,84,0.12), transparent 35%),
+        linear-gradient(135deg, rgba(13,110,253,0.08), rgba(13,110,253,0.02));
+}
+
+.banner-teachers {
+    background:
+        radial-gradient(circle at top right, rgba(13,110,253,0.22), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(13,110,253,0.10), transparent 35%),
+        linear-gradient(135deg, rgba(13,110,253,0.08), rgba(13,110,253,0.02));
+}
+
+.banner-classes {
+    background:
+        radial-gradient(circle at top right, rgba(25,135,84,0.22), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(25,135,84,0.10), transparent 35%),
+        linear-gradient(135deg, rgba(25,135,84,0.08), rgba(25,135,84,0.02));
+}
+
+.banner-rooms {
+    background:
+        radial-gradient(circle at top right, rgba(13,202,240,0.25), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(13,202,240,0.12), transparent 35%),
+        linear-gradient(135deg, rgba(13,202,240,0.08), rgba(13,202,240,0.02));
+}
+
+.search-icon-circle {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto;
+    border-radius: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(255,255,255,0.5);
+    backdrop-filter: blur(6px);
+}
+
+[data-bs-theme="dark"] .search-icon-circle {
+    background: rgba(255,255,255,0.08);
+}
+
+.search-page-title {
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    margin: 0;
+}
+
+.search-page-subtitle {
+    max-width: 720px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--bs-secondary-color);
+    font-size: 1.02rem;
+}
+
+.search-panel-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.search-panel-text {
+    color: var(--bs-secondary-color);
+}
+
+.search-input-wrap {
+    position: relative;
+}
+
+.search-input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.search-input-modern {
+    padding-left: 2.8rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(0,0,0,0.12);
+    box-shadow: none;
+}
+
+.search-input-modern:focus {
+    border-color: rgba(13,110,253,0.45);
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.12);
+}
+
+[data-bs-theme="dark"] .search-input-modern {
+    border-color: rgba(255,255,255,0.12);
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+}
+
+.search-helper-note {
+    color: var(--bs-secondary-color);
+    font-size: 0.95rem;
+}
+
+#search-results {
+    margin-top: 0.4rem;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+#search-results .list-group-item {
+    padding: 0.9rem 1rem;
+    border-left: none;
+    border-right: none;
+}
+
+#search-results .list-group-item:first-child {
+    border-top: none;
+}
+
+#search-results .list-group-item:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 991.98px) {
+    .search-hero-banner {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .search-topbar-card,
+    .search-hero-card,
+    .search-panel-card {
+        border-radius: 1rem;
+    }
+
+    .search-icon-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+        border-radius: 1rem;
+    }
+
+    .search-page-title {
+        font-size: 1.7rem;
+    }
+
+    .search-page-subtitle {
+        font-size: 0.97rem;
+    }
+
+    .search-input-modern {
+        border-radius: 0.9rem;
+    }
+}
