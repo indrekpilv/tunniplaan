@@ -717,3 +717,239 @@ body {
         border-radius: 0.9rem;
     }
 }
+.search-result-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.search-result-main {
+    min-width: 0;
+}
+
+.search-result-title {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.search-result-sub {
+    margin-top: 0.2rem;
+    font-size: 0.88rem;
+    color: var(--bs-secondary-color);
+}
+
+.search-result-badge {
+    flex-shrink: 0;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(13,110,253,0.10);
+    color: var(--bs-body-color);
+}
+
+.search-empty-state {
+    color: var(--bs-secondary-color);
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+.print-page-shell {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.print-toolbar-card,
+.print-hero-card,
+.print-table-card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 1.25rem;
+    background: var(--bs-body-bg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+[data-bs-theme="dark"] .print-toolbar-card,
+[data-bs-theme="dark"] .print-hero-card,
+[data-bs-theme="dark"] .print-table-card {
+    border-color: rgba(255,255,255,0.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+}
+
+.print-hero-card {
+    overflow: hidden;
+}
+
+.print-hero-banner {
+    padding: 2rem 1.25rem;
+    background:
+        radial-gradient(circle at top right, rgba(13,110,253,0.20), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(25,135,84,0.14), transparent 35%),
+        linear-gradient(135deg, rgba(13,110,253,0.08), rgba(13,110,253,0.02));
+}
+
+.print-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: rgba(13,110,253,0.10);
+    color: var(--bs-body-color);
+}
+
+.print-title {
+    font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+    line-height: 1.1;
+    font-weight: 800;
+    margin: 0;
+}
+
+.print-subtitle {
+    color: var(--bs-secondary-color);
+    font-size: 1rem;
+}
+
+.print-note {
+    color: var(--bs-secondary-color);
+    font-size: 0.92rem;
+}
+
+.print-table-card {
+    overflow: hidden;
+}
+
+.print-table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.print-table th,
+.print-table td {
+    border: 1px solid #666;
+    padding: 0.35rem;
+    text-align: left;
+    vertical-align: top;
+    word-wrap: break-word;
+    font-size: 0.92rem;
+}
+
+.print-table th:first-child,
+.print-table td:first-child {
+    width: 12%;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.print-table th:not(:first-child),
+.print-table td:not(:first-child) {
+    width: 17.6%;
+}
+
+.print-period-cell {
+    white-space: nowrap;
+}
+
+.print-time-range {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: var(--bs-secondary-color);
+}
+
+.lesson-block {
+    font-size: 0.85rem;
+    margin-bottom: 0.45rem;
+    padding: 0.45rem;
+    border-radius: 0.65rem;
+    background-color: #fff;
+    border: 1px solid #eee;
+    color: #000;
+}
+
+.lesson-block:last-child {
+    margin-bottom: 0;
+}
+
+.lesson-subject {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.lesson-meta-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+    color: #444;
+    font-size: 0.82rem;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #fff !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .print-page-shell {
+        max-width: none;
+    }
+
+    .print-toolbar-card,
+    .print-hero-card,
+    .print-table-card {
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    .print-hero-banner {
+        background: #fff !important;
+        padding: 0 0 0.75rem 0 !important;
+    }
+
+    .print-badge {
+        background: #fff !important;
+        border: 1px solid #666;
+    }
+
+    .print-table th,
+    .print-table td {
+        font-size: 8pt;
+        border: 1px solid #666 !important;
+        color: #000 !important;
+    }
+
+    .print-time-range {
+        color: #000 !important;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    .lesson-block {
+        border: none;
+        padding: 0;
+        border-radius: 0;
+        background: transparent !important;
+    }
+
+    .lesson-meta-row {
+        color: #000 !important;
+    }
+
+    @page {
+        margin: 1cm;
+    }
+}
