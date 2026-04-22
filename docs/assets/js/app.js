@@ -225,6 +225,14 @@ function initLiveSearch(dataList) {
 
     if (!searchInput || !searchResults) return;
 
+    searchResults.addEventListener('touchstart', function(e) {
+    e.stopPropagation();
+    }, { passive: true });
+
+    searchResults.addEventListener('touchmove', function(e) {
+    e.stopPropagation();
+    }, { passive: true });
+
     function buildUrl(item) {
         return buildViewUrl(item.type, item.id, getDefaultDay());
     }
