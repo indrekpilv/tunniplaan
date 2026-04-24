@@ -240,12 +240,14 @@ function initLiveSearch(dataList) {
         searchResults.innerHTML = '';
         activeIndex = -1;
 
+        const normalizedQuery = String(query || '').toLowerCase().trim();
+
         const filtered = dataList.filter(item =>
-            item.name.toLowerCase().includes(query)
+            String(item.name || '').toLowerCase().includes(normalizedQuery)
         );
 
         if (filtered.length === 0) {
-            searchResults.innerHTML = renderSearchEmptyState(query);
+            searchResults.innerHTML = renderSearchEmptyState(normalizedQuery);
             searchResults.classList.add('is-open');
             return;
         }
@@ -270,15 +272,15 @@ function initLiveSearch(dataList) {
     }
 
     searchInput.addEventListener('focus', function() {
-        showResults(this.value.toLowerCase().trim());
+        showResults(this.value);
     });
 
     searchInput.addEventListener('input', function() {
-        showResults(this.value.toLowerCase().trim());
+        showResults(this.value);
     });
 
     searchInput.addEventListener('click', function() {
-        showResults(this.value.toLowerCase().trim());
+        showResults(this.value);
     });
 
     searchInput.addEventListener('keydown', function(e) {
@@ -333,11 +335,10 @@ function initLiveSearch(dataList) {
             closeResults();
         }
     });
-}
 
     document.addEventListener('click', function(e) {
-        if (e.target !== searchInput && !searchResults.contains(e.target)) {
-            searchResults.innerHTML = '';
+        if (!searchContainer || !searchContainer.contains(e.target)) {
+            closeResults();
         }
     });
 }
@@ -802,3 +803,31 @@ async function initPrintPage() {
         `;
     }).join('');
 }
+
+document.addEventListener('DOMContentLoaded', async function() {
+    initTheme();
+    initHomeLogic();
+
+    const currentPage = (window.location.pathname.split('/').pop() || 'index.html').toLowerCase();
+
+    if (currentPage === 'vaade.html') {
+        await initViewPage();
+        return;
+    }
+
+    if (currentPage === 'print.html') {
+        await initPrintPage();
+        return;
+    }
+
+    const data = await loadTimetableData();
+    if (!data) return;
+
+    const dataList = [
+        ...Object.entries(data.teachers || {}).map(([id, name]) => ({ type: 'teacher', id, name })),
+        ...Object.entries(data.classes || {}).map(([id, name]) => ({ type: 'class', id, name })),
+        ...Object.entries(data.rooms || {}).map(([id, name]) => ({ type: 'room', id, name }))
+    ];
+
+    initLiveSearch(dataList);
+});
